@@ -4,7 +4,7 @@
  "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-	<class name="no.uio.inf5750.assignment2.model.Course" table="students">
+		<class name="no.uio.inf5750.assignment2.model.Course" table="courses"> 
 
 		<id name="id" type="int" column="id">
 			<generator class="native" />
@@ -12,6 +12,9 @@
 
 		<property name="courseCode" not-null="true" unique="true"
 			column="course_code" type="string" />
+			
+		<property name="name" not-null="true" unique="true"
+			column="name" type="string" />
 	
 		<!-- Bidirectional many-to-many -->
 		<set name="attendants" table="course_students" inverse="true">

@@ -1,32 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans
-    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/tx
+                           http://www.springframework.org/schema/tx/spring-tx.xsd">
 
-
-<!--<tx:annotation-driven transaction-manager="transactionManager"/>-->
-<bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
-	<property name="sessionFactory" ref="sessionFactory"/>
-	<property name="dataSource" ref="dataSource"/>
-</bean>
-
-<bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-	<property name="dataSource" ref="dataSource"/>
-	<property name="mappingResources">
+	<tx:annotation-driven transaction-manager="transactionManager"/>
 	
-	<list>
-		<value>hibernate/Course.hbm.xml</value>
-		<value>hibernate/Degree.hbm.xml</value>
-		<value>hibernate/Student.hbm.xml</value>
-	</list>
-</property>
-<property name="hibernateProperties">
-	<props>
-		<prop key="hibernate.dialect">org.hibernate.dialect.H2Dialect</prop>
-		<prop key="hibernate.hbm2ddl.auto">create-drop</prop>
-	</props>
-</property>
-</bean>
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="mappingResources">
+			<list>
+				<value>hibernate/Course.hbm.xml</value>
+				<value>hibernate/Degree.hbm.xml</value>
+				<value>hibernate/Student.hbm.xml</value>
+			</list>
+		</property>
+		
+		<property name="hibernateProperties">
+		<props>
+			<prop key="hibernate.show_sql">true</prop>
+			<prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
+			<prop key="hibernate.hbm2ddl.auto">create-drop</prop>
+		</props>
+		</property>
+	</bean>
+	
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+	destroy-method="close">
+		<property name="jdbcUrl" value="jdbc:postgresql:inf5750" />
+		<property name="driverClass" value="org.postgresql.Driver" />
+		<property name="user" value="dhis" />
+		<property name="password" value="dhis" />
+	</bean>
+	
+	<bean id="defaultStudentSystem" class="no.uio.inf5750.assignment2.service.impl.DefaultStudentSystem">
+		<!-- <property name="studentDao" ref="studentDAO" /> -->
+		<!-- <property name="courseDao" ref="courseDAO" /> -->
+		<!-- <property name="degreeDao" ref="degreeDAO" /> -->
+	</bean>
+	
+	<bean id="studentDAO" class="no.uio.inf5750.assignment2.dao.hibernate.HibernateStudentDao" >
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	
+	<bean id="degreeDAO" class="no.uio.inf5750.assignment2.dao.hibernate.HibernateDegreeDao" >
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	
+	<bean id="courseDAO" class="no.uio.inf5750.assignment2.dao.hibernate.HibernateCourseDao" >
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	
 </beans>

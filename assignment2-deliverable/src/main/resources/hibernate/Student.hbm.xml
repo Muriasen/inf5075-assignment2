@@ -17,15 +17,15 @@
 		<set name="courses" table="course_students">
 			<key column="student_id" />
 			<many-to-many column="course_id"
-				class="no.uio.inf5750.example.model.Course" />
+				class="no.uio.inf5750.assignment2.model.Course" />
 		</set>
 
-		<!-- Unidirectional many-to-one -->
-		<set name="degrees" table="degrees">
+		<!-- Unidirectional one-to-many -->
+		<set name="degrees" table="student_degrees">
 			<key column="student_id" />
 			<many-to-many column="degree_id"
-				class="no.uio.inf5750.example.model.Degree"
-				unique="true"  />
+				unique="true"
+				class="no.uio.inf5750.assignment2.model.Degree" />
 		</set>
 
 
