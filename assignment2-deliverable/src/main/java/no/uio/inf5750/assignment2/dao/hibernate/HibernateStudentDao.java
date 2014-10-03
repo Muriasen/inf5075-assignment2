@@ -1,13 +1,14 @@
 package no.uio.inf5750.assignment2.dao.hibernate;
 
 import java.util.Collection;
+import java.util.List;
+
+import no.uio.inf5750.assignment2.dao.StudentDAO;
+import no.uio.inf5750.assignment2.model.Student;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-
-import no.uio.inf5750.assignment2.dao.StudentDAO;
-import no.uio.inf5750.assignment2.model.Student;
 
 public class HibernateStudentDao implements StudentDAO {
 
@@ -52,7 +53,7 @@ public class HibernateStudentDao implements StudentDAO {
 		Session session = sessionFactory.getCurrentSession();
 		session.beginTransaction();
 		
-		String hql = "from students where name = :name";
+		String hql = "from Student where name = :name";
 		Query query = session.createQuery(hql);
 		query.setString("name", name);
 		
@@ -63,15 +64,22 @@ public class HibernateStudentDao implements StudentDAO {
 		Session session = sessionFactory.getCurrentSession();
 		session.beginTransaction();
 		
-		String hql = "from students";
+		String hql = "from Student";
 		Query query = session.createQuery(hql);
 		
-		return query.list();
+		Collection<Student> students = query.list();
+		
+		System.out.println("\n\n\n\n\n\n");
+		for(Student s : students) {
+			System.out.println("name: "+ s.getName());
+		}
+		System.out.println("\n\n\n\n\n\n");
+		
+		return students;
 	}
 
 	public void delStudent(Student student) {
 		Session session = sessionFactory.getCurrentSession();
-		session.beginTransaction();
 		
 		session.delete(student);
 		session.getTransaction().commit();

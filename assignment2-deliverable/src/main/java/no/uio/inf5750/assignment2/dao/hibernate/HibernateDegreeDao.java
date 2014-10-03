@@ -1,14 +1,15 @@
 package no.uio.inf5750.assignment2.dao.hibernate;
 
 import java.util.Collection;
+import java.util.List;
+
+import no.uio.inf5750.assignment2.dao.DegreeDAO;
+import no.uio.inf5750.assignment2.model.Degree;
+
 
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-
-import no.uio.inf5750.assignment2.dao.DegreeDAO;
-import no.uio.inf5750.assignment2.model.Course;
-import no.uio.inf5750.assignment2.model.Degree;
 
 public class HibernateDegreeDao implements DegreeDAO {
 
@@ -44,7 +45,7 @@ private SessionFactory sessionFactory;
 		Session session = sessionFactory.getCurrentSession();
 		session.beginTransaction();
 		
-		String hql = "from degrees where type = :type";
+		String hql = "from Degree where type = :type";
 		Query query = session.createQuery(hql);
 		query.setString("type", type);
 		
@@ -55,10 +56,12 @@ private SessionFactory sessionFactory;
 		Session session = sessionFactory.getCurrentSession();
 		session.beginTransaction();
 		
-		String hql = "from degrees";
+		String hql = "from Degree";
 		Query query = session.createQuery(hql);
 		
-		return query.list();
+		List<Degree> degrees = query.list();
+		
+		return degrees;
 	}
 
 	public void delDegree(Degree degree) {

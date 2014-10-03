@@ -1,6 +1,7 @@
 package no.uio.inf5750.assignment2.dao.hibernate;
 
 import java.util.Collection;
+import java.util.List;
 
 import no.uio.inf5750.assignment2.dao.CourseDAO;
 import no.uio.inf5750.assignment2.model.Course;
@@ -43,7 +44,7 @@ public class HibernateCourseDao implements CourseDAO {
 		Session session = sessionFactory.getCurrentSession();
 		session.beginTransaction();
 		
-		String hql = "from courses where course_code = :courseCode";
+		String hql = "from Course where courseCode = :courseCode";
 		Query query = session.createQuery(hql);
 		query.setString("courseCode", courseCode);
 		
@@ -54,7 +55,7 @@ public class HibernateCourseDao implements CourseDAO {
 		Session session = sessionFactory.getCurrentSession();
 		session.beginTransaction();
 		
-		String hql = "from Courses where name = :name";
+		String hql = "from Course where name = :name";
 		Query query = session.createQuery(hql);
 		query.setString("name", name);
 		
@@ -65,10 +66,12 @@ public class HibernateCourseDao implements CourseDAO {
 		Session session = sessionFactory.getCurrentSession();
 		session.beginTransaction();
 		
-		String hql = "from courses";
+		String hql = "from Course";
 		Query query = session.createQuery(hql);
 		
-		return query.list();
+		List<Course> courses = query.list();
+		
+		return courses;
 	}
 
 	public void delCourse(Course course) {

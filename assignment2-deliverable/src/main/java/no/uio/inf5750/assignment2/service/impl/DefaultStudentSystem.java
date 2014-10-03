@@ -12,6 +12,11 @@ import no.uio.inf5750.assignment2.service.StudentSystem;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+/**
+ * TODO: More defensive programming.
+ * @author maudal
+ *
+ */
 public class DefaultStudentSystem implements StudentSystem {
 
 	/**
@@ -25,89 +30,185 @@ public class DefaultStudentSystem implements StudentSystem {
 	@Autowired
 	private HibernateDegreeDao degreeDao;
 	
+	/**
+	 * Adds course, returns id new course.
+	 */
 	public int addCourse(String courseCode, String name) {
-		// TODO Auto-generated method stub
-		return 0;
+		if(courseCode.length() == 0 || name.length() == 0) {
+			return -1;
+		}
+		
+		Course course = new Course(courseCode, name);
+		int id = courseDao.saveCourse(course);
+		
+		return id;
 	}
 
+	/**
+	 * Updates course with the given courseId, with new courseCode and name
+	 */
 	public void updateCourse(int courseId, String courseCode, String name) {
-		// TODO Auto-generated method stub
+		if(!isValidId(courseId) || courseCode.length() == 0
+				|| name.length() == 0) {
+			return;
+		}
 		
+		Course course = courseDao.getCourse(courseId);
+		
+		if(course != null) {
+			course.setCourseCode(courseCode);
+			course.setName(name);
+			courseDao.saveCourse(course);
+		}
 	}
 
 	public Course getCourse(int courseId) {
-		// TODO Auto-generated method stub
-		return null;
+		if(!isValidId(courseId)) {
+			return null;
+		}
+		
+		return courseDao.getCourse(courseId);
 	}
 
 	public Course getCourseByCourseCode(String courseCode) {
-		// TODO Auto-generated method stub
-		return null;
+		if(courseCode.length() == 0) {
+			return null;
+		}
+		
+		return courseDao.getCourseByCourseCode(courseCode);
 	}
 
 	public Course getCourseByName(String name) {
-		// TODO Auto-generated method stub
-		return null;
+		if(name.length() == 0) {
+			return null;
+		}
+		
+		return courseDao.getCourseByName(name);
 	}
 
 	public Collection<Course> getAllCourses() {
-		// TODO Auto-generated method stub
-		return null;
+		return courseDao.getAllCourses();
 	}
 
 	public void delCourse(int courseId) {
-		// TODO Auto-generated method stub
+		if(!isValidId(courseId)) {
+			return;
+		}
 		
+		Course course = courseDao.getCourse(courseId);
+		
+		if(course != null) {
+			courseDao.delCourse(course);
+		}
 	}
 
 	public void addAttendantToCourse(int courseId, int studentId) {
-		// TODO Auto-generated method stub
+		if(!isValidId(studentId) || !isValidId(courseId)) {
+			return;
+		}
 		
+		Student student = studentDao.getStudent(studentId);
+		Course course   = courseDao.getCourse(courseId);
+		
+		if(student != null && course != null) {
+			course.getAttendants().add(student);
+		}
 	}
 
 	public void removeAttendantFromCourse(int courseId, int studentId) {
-		// TODO Auto-generated method stub
+		if(!isValidId(studentId) || !isValidId(courseId)) {
+			return;
+		}
 		
+		Course course   = courseDao.getCourse(courseId);
+		Student student = studentDao.getStudent(studentId);
+		
+		if(course != null && student != null) {
+			course.getAttendants().remove(student);
+			courseDao.saveCourse(course);
+		}
 	}
 
 	public int addDegree(String type) {
-		// TODO Auto-generated method stub
-		return 0;
+		if(type.length() == 0) {
+			return -1;
+		}
+		
+		return degreeDao.saveDegree(new Degree(type));
 	}
 
 	public void updateDegree(int degreeId, String type) {
-		// TODO Auto-generated method stub
+		if(!isValidId(degreeId) || type.length() == 0) {
+			return;
+		}
 		
+		Degree degree = degreeDao.getDegree(degreeId);
+		
+		if(degree != null) {
+			degree.setType(type);
+			degreeDao.saveDegree(degree);
+		}
 	}
 
 	public Degree getDegree(int degreeId) {
-		// TODO Auto-generated method stub
-		return null;
+		if(!isValidId(degreeId)) {
+			return null;
+		}
+		
+		return degreeDao.getDegree(degreeId);
 	}
 
 	public Degree getDegreeByType(String type) {
-		// TODO Auto-generated method stub
-		return null;
+		if(type.length() == 0) {
+			return null;
+		}
+		
+		return degreeDao.getDegreeByType(type);
 	}
 
 	public Collection<Degree> getAllDegrees() {
-		// TODO Auto-generated method stub
-		return null;
+		return degreeDao.getAllDegrees();
 	}
 
 	public void delDegree(int degreeId) {
-		// TODO Auto-generated method stub
+		if(!isValidId(degreeId)) {
+			return;
+		}
 		
+		Degree degree = degreeDao.getDegree(degreeId);
+		
+		if(degree != null) {
+			degreeDao.delDegree(degree);
+			degreeDao.saveDegree(degree);
+		}
 	}
 
 	public void addRequiredCourseToDegree(int degreeId, int courseId) {
-		// TODO Auto-generated method stub
+		if(!isValidId(degreeId) || !isValidId(courseId)) {
+			return;
+		}
 		
+		Course course = courseDao.getCourse(courseId);
+		Degree degree = degreeDao.getDegree(degreeId);
+		
+		if(course != null && degree != null) {
+			degree.getRequiredCourses().add(course);
+			degreeDao.saveDegree(degree);
+		}
 	}
 
 	public void removeRequiredCourseFromDegree(int degreeId, int courseId) {
-		// TODO Auto-generated method stub
+		if(!isValidId(degreeId) || !isValidId(courseId)) {
+			return;
+		}
 		
+		Course course = courseDao.getCourse(courseId);
+		Degree degree = degreeDao.getDegree(degreeId);
+		
+		if(course != null && degree != null) {
+			degree.getRequiredCourses().remove(course);
+			degreeDao.saveDegree(degree);
+		}
 	}
 
 	/**
@@ -137,25 +238,17 @@ public class DefaultStudentSystem implements StudentSystem {
 		student.setName(name);
 		
 		studentDao.saveStudent(student);
-		
 	}
 	
 	
-	public Student getStudent(int studentId) {
-		
-		Student student = studentDao.getStudent(studentId);
-		
-		if(student == null) {
-			System.out.println("\n\nStudent not found\n\n");
-		}
-		
-		return student;
+	public Student getStudent(int studentId) {		
+		return studentDao.getStudent(studentId);
 	}
 
 	public Student getStudentByName(String name) {
 		
 		if(name.length() == 0) {
-			System.out.println("\n\nUser tried to search for student with no name\n\n");
+			return null;
 		}
 		
 		return studentDao.getStudentByName(name);
@@ -210,9 +303,21 @@ public class DefaultStudentSystem implements StudentSystem {
 	}
 
 	public boolean studentFulfillsDegreeRequirements(int studentId, int degreeId) {
+		Student student = studentDao.getStudent(studentId);
+		Degree degree = degreeDao.getDegree(degreeId);
 		
-		//return false;
-		return true;
+		if (student != null && degree != null) {
+			
+			for (Course course : degree.getRequiredCourses()) {
+				
+				if (student.getCourses().contains(course) == false) {
+					return false;
+				}
+			}
+			return true;
+		}
+		
+		return false;
 	}
 
 	/**
