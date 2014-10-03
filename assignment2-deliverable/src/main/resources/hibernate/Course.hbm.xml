@@ -7,8 +7,8 @@
 		<class name="no.uio.inf5750.assignment2.model.Course" table="courses"> 
 
 		<id name="id" type="int" column="id">
-			<!-- <generator class="native" /> -->
-			<generator class="increment" />
+			<!-- <generator class="increment" /> -->
+			<generator class="native" />
 		</id>
 
 		<property name="courseCode" not-null="true" unique="true"
