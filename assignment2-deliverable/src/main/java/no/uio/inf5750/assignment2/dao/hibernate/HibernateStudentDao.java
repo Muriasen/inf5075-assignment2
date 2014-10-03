@@ -7,7 +7,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
 import no.uio.inf5750.assignment2.dao.StudentDAO;
-import no.uio.inf5750.assignment2.model.Degree;
 import no.uio.inf5750.assignment2.model.Student;
 
 public class HibernateStudentDao implements StudentDAO {
@@ -28,6 +27,15 @@ public class HibernateStudentDao implements StudentDAO {
 		
 		Integer id = (Integer) session.save(student); 
 		session.getTransaction().commit();
+		
+		
+		/**
+		 * Testing!!
+		 */
+		Student s = getStudent(id);
+		System.out.println("|||||||||||||||||||||||||||||||||||||\n\n"
+							+ s.getName() + "\n\n||||||||||||||||");
+		
 		return id;
 	}
 

@@ -1,5 +1,6 @@
 package no.uio.inf5750.assignment2.service.impl;
 import java.util.Collection;
+import java.util.Set;
 
 import no.uio.inf5750.assignment2.dao.hibernate.HibernateCourseDao;
 import no.uio.inf5750.assignment2.dao.hibernate.HibernateDegreeDao;
@@ -109,60 +110,119 @@ public class DefaultStudentSystem implements StudentSystem {
 		
 	}
 
-	@Override
+	/**
+	 * Stores student in db.
+	 */
 	public int addStudent(String name) {
-		/**
-		 * TODO: Test name
-		 */
+		
+		if(name.length() == 0) {
+			return -1;
+		}
+		
 		return studentDao.saveStudent(new Student(name));
 	}
 
-	@Override
+	/**
+	 * Updates student with the given studentId.
+	 * Does nothing if studentId is less than 1
+	 * or name is empty.
+	 */
 	public void updateStudent(int studentId, String name) {
-		// TODO Auto-generated method stub
+		
+		if(name.length() == 0 || !isValidId(studentId)) {
+			return;
+		}
+		
+		Student student = studentDao.getStudent(studentId);
+		student.setName(name);
+		
+		studentDao.saveStudent(student);
 		
 	}
-
-	@Override
+	
+	
 	public Student getStudent(int studentId) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		Student student = studentDao.getStudent(studentId);
+		
+		if(student == null) {
+			System.out.println("\n\nStudent not found\n\n");
+		}
+		
+		return student;
 	}
 
-	@Override
 	public Student getStudentByName(String name) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		if(name.length() == 0) {
+			System.out.println("\n\nUser tried to search for student with no name\n\n");
+		}
+		
+		return studentDao.getStudentByName(name);
 	}
 
-	@Override
 	public Collection<Student> getAllStudents() {
-		// TODO Auto-generated method stub
-		return null;
+		return studentDao.getAllStudents();
 	}
 
-	@Override
 	public void delStudent(int studentId) {
-		// TODO Auto-generated method stub
+		if(!isValidId(studentId)) {
+			return;
+		}
 		
+		Student student = studentDao.getStudent(studentId);
+		studentDao.delStudent(student);
 	}
 
-	@Override
 	public void addDegreeToStudent(int studentId, int degreeId) {
-		// TODO Auto-generated method stub
 		
+		if(!isValidId(studentId) || !isValidId(degreeId)) {
+			return;
+		}
+		
+		Student student = studentDao.getStudent(studentId);
+		Degree degree   = degreeDao.getDegree(degreeId);
+		
+		Set<Degree> degrees = student.getDegrees();
+		degrees.add(degree);
+		student.setDegrees(degrees);
+		
+		studentDao.saveStudent(student);
 	}
 
-	@Override
 	public void removeDegreeFromStudent(int studentId, int degreeId) {
-		// TODO Auto-generated method stub
 		
+		if(!isValidId(studentId) || !isValidId(degreeId)) {
+			return;
+		}
+		
+		Student student = studentDao.getStudent(studentId);
+		Set<Degree> degrees = student.getDegrees();
+		
+		for(Degree degree : degrees) {
+			if(degree.getId() == degreeId) {
+				degrees.remove(degree);
+			}
+		}
+		
+		student.setDegrees(degrees);
+		studentDao.saveStudent(student);
 	}
 
-	@Override
 	public boolean studentFulfillsDegreeRequirements(int studentId, int degreeId) {
-		// TODO Auto-generated method stub
-		return false;
+		
+		//return false;
+		return true;
 	}
 
+	/**
+	 * Ids less than one are not stored in the db.
+	 * @param id
+	 * @return
+	 */
+	private boolean isValidId(int id) {
+		return id < 1 ? false : true;
+	}
+	
+	
 }
