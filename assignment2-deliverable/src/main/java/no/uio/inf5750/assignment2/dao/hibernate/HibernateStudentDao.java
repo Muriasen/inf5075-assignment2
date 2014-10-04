@@ -30,12 +30,14 @@ public class HibernateStudentDao implements StudentDAO {
 		Session session = sessionFactory.getCurrentSession();
 		Transaction tx  = session.beginTransaction();
 		
-		Integer id      = -1; 
+		Integer id = -1; 
 		
 		try {
 			
 			id = (Integer) session.save(student);
-			session.getTransaction().commit();
+			if(!tx.wasCommitted()) {
+				tx.commit();
+			}
 			session.flush();
 			
 		} catch (HibernateException e) {
@@ -58,7 +60,9 @@ public class HibernateStudentDao implements StudentDAO {
 		try {
 			
 			student = (Student) session.get(Student.class, id);
-			session.getTransaction().commit();
+			if(!tx.wasCommitted()) {
+				tx.commit();
+			}
 			session.flush();
 			
 		} catch (HibernateException e) {
@@ -67,7 +71,7 @@ public class HibernateStudentDao implements StudentDAO {
 			if (tx != null) {
 				tx.rollback();
 			}
-		}
+		} 
 		
 		return student;
 	}
@@ -85,7 +89,7 @@ public class HibernateStudentDao implements StudentDAO {
 			query = session.createQuery(hql);
 			query.setString("name", name);
 			student = (Student) query.uniqueResult();
-			session.getTransaction().commit();
+			tx.commit();
 			session.flush();
 			
 		} catch (HibernateException e) {
@@ -110,7 +114,7 @@ public class HibernateStudentDao implements StudentDAO {
 			
 			query = session.createQuery("from Student");
 			students = query.list();
-			session.getTransaction().commit();
+			tx.commit();
 			session.flush();
 			
 		} catch (HibernateException e) {
@@ -130,9 +134,10 @@ public class HibernateStudentDao implements StudentDAO {
 		Transaction tx  = session.beginTransaction();
 		
 		try {
-			
 			session.delete(student);
-			session.getTransaction().commit();
+			if(!tx.wasCommitted()) {
+				tx.commit();
+			}
 			session.flush();
 			
 		} catch (HibernateException e) {
@@ -141,6 +146,7 @@ public class HibernateStudentDao implements StudentDAO {
 			if (tx != null) {
 				tx.rollback();
 			}
+		
 		}
 	}
 

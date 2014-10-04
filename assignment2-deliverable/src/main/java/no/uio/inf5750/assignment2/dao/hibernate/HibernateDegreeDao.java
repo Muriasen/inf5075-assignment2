@@ -12,7 +12,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.springframework.transaction.annotation.Transactional;
 
 public class HibernateDegreeDao implements DegreeDAO {
 
@@ -36,7 +35,9 @@ public class HibernateDegreeDao implements DegreeDAO {
 		try {
 
 			id = (Integer) session.save(degree);
-			session.getTransaction().commit();
+			if(!tx.wasCommitted()) {
+				tx.commit();
+			}
 			session.flush();
 
 		} catch (HibernateException e) {
@@ -58,7 +59,9 @@ public class HibernateDegreeDao implements DegreeDAO {
 		try {
 
 			degree = (Degree) session.get(Degree.class, id);
-			session.getTransaction().commit();
+			if(!tx.wasCommitted()) {
+				tx.commit();
+			}
 			session.flush();
 
 		} catch (HibernateException e) {
@@ -83,7 +86,7 @@ public class HibernateDegreeDao implements DegreeDAO {
 			
 			query = session.createQuery(hql);
 			query.setString("type", type);
-			session.getTransaction().commit();
+			tx.commit();
 			session.flush();
 
 		} catch (HibernateException e) {
@@ -109,7 +112,7 @@ public class HibernateDegreeDao implements DegreeDAO {
 
 			query = session.createQuery(hql);
 			degrees = query.list();
-			session.getTransaction().commit();
+			tx.commit();
 			session.flush();
 
 		} catch (HibernateException e) {
@@ -130,7 +133,9 @@ public class HibernateDegreeDao implements DegreeDAO {
 		try {
 
 			session.delete(degree);
-			session.getTransaction().commit();
+			if(!tx.wasCommitted()) {
+				tx.commit();
+			}
 			session.flush();
 
 		} catch (HibernateException e) {

@@ -25,11 +25,10 @@
 				class="no.uio.inf5750.assignment2.model.Course" />
 		</set>
 
-		<!-- Unidirectional one-to-many -->
+		<!-- Unidirectional many-to-many -->
 		<set name="degrees" table="student_degrees">
 			<key column="student_id" />
 			<many-to-many column="degree_id"
-				unique="true"
 				class="no.uio.inf5750.assignment2.model.Degree" />
 		</set>
 

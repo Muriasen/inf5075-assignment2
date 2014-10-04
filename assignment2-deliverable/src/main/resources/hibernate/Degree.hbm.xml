@@ -14,12 +14,12 @@
 		<property name="type" not-null="true" unique="true"
 			column="course_code" type="string" />
 		
-		<!-- Unidirectional one-to-many -->
+		<!-- Unidirectional many-to-many -->
 		<set name="requiredCourses" table="required_courses">
 			<key column="degree_id" />
 			<many-to-many column="course_id"
-				unique="true"
 				class="no.uio.inf5750.assignment2.model.Course" />
+				<!-- unique="true" -->
 		</set>
 
 

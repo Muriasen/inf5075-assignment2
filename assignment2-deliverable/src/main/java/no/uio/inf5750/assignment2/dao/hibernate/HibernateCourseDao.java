@@ -37,7 +37,9 @@ public class HibernateCourseDao implements CourseDAO {
 		try {
 			
 			id = (Integer) session.save(course); 
-			session.getTransaction().commit();
+			if(!tx.wasCommitted()) {
+				tx.commit();
+			}
 			session.flush();
 			
 		} catch (HibernateException e) {
@@ -60,7 +62,9 @@ public class HibernateCourseDao implements CourseDAO {
 		try {
 			
 			course = (Course) session.get(Course.class, id);
-			session.getTransaction().commit();
+			if(!tx.wasCommitted()) {
+				tx.commit();
+			}
 			session.flush();
 			
 		} catch (HibernateException e) {
@@ -79,15 +83,15 @@ public class HibernateCourseDao implements CourseDAO {
 		Transaction tx  = session.beginTransaction();
 		
 		String hql = "from Course where courseCode = :courseCode";
-		Query query = session.createQuery(hql);
-		query.setString("courseCode", courseCode);
-		
-		Course course = (Course) query.uniqueResult();
+		Query query = null;
+		Course course = null;
 		
 		try {
 			
+			query = session.createQuery(hql);
+			query.setString("courseCode", courseCode);
 			course = (Course) query.uniqueResult();
-			session.getTransaction().commit();
+			tx.commit();
 			session.flush();
 			
 		} catch (HibernateException e) {
@@ -115,7 +119,7 @@ public class HibernateCourseDao implements CourseDAO {
 			query.setString("name", name);
 			
 			course = (Course) query.uniqueResult();
-			session.getTransaction().commit();
+			tx.commit();
 			session.flush();
 			
 		} catch (HibernateException e) {
@@ -141,7 +145,7 @@ public class HibernateCourseDao implements CourseDAO {
 			
 			query = session.createQuery(hql);
 			courses = query.list();
-			session.getTransaction().commit();
+			tx.commit();
 			session.flush();
 			
 		} catch (HibernateException e) {
@@ -162,7 +166,9 @@ public class HibernateCourseDao implements CourseDAO {
 		try {
 			
 			session.delete(course);
-			session.getTransaction().commit();
+			if(!tx.wasCommitted()) {
+				tx.commit();
+			}
 			session.flush();
 			
 		} catch (HibernateException e) {
