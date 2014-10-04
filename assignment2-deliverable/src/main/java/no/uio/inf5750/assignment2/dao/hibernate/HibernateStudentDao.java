@@ -11,6 +11,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.springframework.transaction.annotation.Transactional;
 
 public class HibernateStudentDao implements StudentDAO {
 
@@ -27,21 +28,22 @@ public class HibernateStudentDao implements StudentDAO {
 	
 	public int saveStudent(Student student) {
 		Session session = sessionFactory.getCurrentSession();
-		session.beginTransaction();
+		Transaction tx  = session.beginTransaction();
 		
-		Integer id = (Integer) session.save(student); 
-		
-		System.out.println("\n\n\n");
+		Integer id      = -1; 
 		
 		try {
-			logger.debug("error");
-			session.getTransaction().commit();
-			logger.debug("error");
 			
-		} catch(HibernateException e) {
-			System.out.println("\n\n\n\n\n\n");
-			System.out.println(e.getMessage());
-			System.out.println("\n\n\n\n\n\n");
+			id = (Integer) session.save(student);
+			session.getTransaction().commit();
+			session.flush();
+			
+		} catch (HibernateException e) {
+			logger.debug("Error message:\n"+e.getMessage());
+			logger.debug("Stacktrace:\n"+e.getStackTrace());
+			if (tx != null) {
+				tx.rollback();
+			}
 		}
 		
 		return id;
@@ -49,63 +51,97 @@ public class HibernateStudentDao implements StudentDAO {
 
 	public Student getStudent(int id) {
 		Session session = sessionFactory.getCurrentSession();
-		session.beginTransaction();
+		Transaction tx  = session.beginTransaction();
 		
-		Student student = (Student) session.get(Student.class, id);
-		session.getTransaction().commit();
+		Student student = null;
+		
+		try {
+			
+			student = (Student) session.get(Student.class, id);
+			session.getTransaction().commit();
+			session.flush();
+			
+		} catch (HibernateException e) {
+			logger.debug("Error message:\n" + e.getMessage());
+			logger.debug("Stacktrace:\n" + e.getStackTrace());
+			if (tx != null) {
+				tx.rollback();
+			}
+		}
 		
 		return student;
 	}
 
 	public Student getStudentByName(String name) {
+		
 		Session session = sessionFactory.getCurrentSession();
-		session.beginTransaction();
+		Transaction tx  = session.beginTransaction();
+		String hql      = "from Student where name = :name";
+		Query query     = null;
+		Student student = null; 
 		
-		String hql = "from Student where name = :name";
-		Query query = session.createQuery(hql);
-		query.setString("name", name);
+		try {
+			
+			query = session.createQuery(hql);
+			query.setString("name", name);
+			student = (Student) query.uniqueResult();
+			session.getTransaction().commit();
+			session.flush();
+			
+		} catch (HibernateException e) {
+			logger.debug("Error message:\n" + e.getMessage());
+			logger.debug("Stacktrace:\n" + e.getStackTrace());
+			if (tx != null) {
+				tx.rollback();
+			}
+		}
 		
-		session.getTransaction().commit();
-		
-		return (Student) query.uniqueResult();
+		return student;
 	}
 
 	public Collection<Student> getAllStudents() {
 		Session session = sessionFactory.getCurrentSession();
-		Transaction tx = session.beginTransaction();
+		Transaction tx  = session.beginTransaction();
 		
-		Query query = session.createQuery("from Student");
-		
+		Query query = null;
+		Collection<Student> students = null;
+
 		try {
 			
+			query = session.createQuery("from Student");
+			students = query.list();
 			session.getTransaction().commit();
+			session.flush();
 			
-		} catch(HibernateException e) {
-			System.out.println("\n\n\n\n\n\n");
-			System.out.println(e.getMessage());
-			System.out.println("\n\n\n\n\n\n");
+		} catch (HibernateException e) {
+			logger.debug("Error message:\n"+e.getMessage());
+			logger.debug("Stacktrace:\n"+e.getStackTrace());
+			if (tx != null) {
+				tx.rollback();
+			}
 		}
-		
-		Collection<Student> students = query.list();
-		
-		/*
-		System.out.println("\n\n\n\n\n\n");
-		System.out.println("elements: "+ students.size());
-		for(Student s : students) {
-			System.out.println("id: "+ s.getId());
-			System.out.println("name: "+ s.getName());
-		}
-		System.out.println("\n\n\n\n\n\n");
-		*/
+
 		
 		return students;
 	}
 
 	public void delStudent(Student student) {
 		Session session = sessionFactory.getCurrentSession();
+		Transaction tx  = session.beginTransaction();
 		
-		session.delete(student);
-		session.getTransaction().commit();
+		try {
+			
+			session.delete(student);
+			session.getTransaction().commit();
+			session.flush();
+			
+		} catch (HibernateException e) {
+			logger.debug("Error message:\n"+e.getMessage());
+			logger.debug("Stacktrace:\n"+e.getStackTrace());
+			if (tx != null) {
+				tx.rollback();
+			}
+		}
 	}
 
 }

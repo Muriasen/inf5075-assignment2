@@ -25,8 +25,10 @@ public class DefaultStudentSystem implements StudentSystem {
 	 */
 	@Autowired
 	private HibernateCourseDao courseDao;
+	
 	@Autowired
 	private HibernateStudentDao studentDao;
+	
 	@Autowired
 	private HibernateDegreeDao degreeDao;
 	
@@ -112,6 +114,9 @@ public class DefaultStudentSystem implements StudentSystem {
 		
 		if(student != null && course != null) {
 			course.getAttendants().add(student);
+			student.getCourses().add(course);
+			courseDao.saveCourse(course);
+			studentDao.saveStudent(student);
 		}
 	}
 
@@ -125,7 +130,9 @@ public class DefaultStudentSystem implements StudentSystem {
 		
 		if(course != null && student != null) {
 			course.getAttendants().remove(student);
+			student.getCourses().remove(course);
 			courseDao.saveCourse(course);
+			studentDao.saveStudent(student);
 		}
 	}
 
@@ -179,7 +186,6 @@ public class DefaultStudentSystem implements StudentSystem {
 		
 		if(degree != null) {
 			degreeDao.delDegree(degree);
-			degreeDao.saveDegree(degree);
 		}
 	}
 
