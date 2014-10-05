@@ -4,12 +4,18 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans 
                            http://www.springframework.org/schema/beans/spring-beans.xsd
                            http://www.springframework.org/schema/tx
-                           http://www.springframework.org/schema/tx/spring-tx.xsd">
+                           http://www.springframework.org/schema/tx/spring-tx.xsd
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context-3.1.xsd"> 
+                           <!-- Unsure about which spring-context version I should actually use -->
 
+	<context:annotation-config />
 	<tx:annotation-driven transaction-manager="transactionManager"/>
+	
 	
 	<bean id="transactionManager"
 		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
@@ -78,7 +84,6 @@
 	<!-- Test classes -->
 	<bean id="testStudentDAO" class="no.uio.inf5750.assignment2.dao.StudentDAOTest" >
 		<!-- <property name="sessionFactory" ref="sessionFactory" /> -->
-		
 	</bean>
 	
 	

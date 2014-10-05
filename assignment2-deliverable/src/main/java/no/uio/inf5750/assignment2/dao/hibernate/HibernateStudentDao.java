@@ -11,7 +11,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.springframework.transaction.annotation.Transactional;
 
 public class HibernateStudentDao implements StudentDAO {
 
