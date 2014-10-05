@@ -36,6 +36,9 @@ public class DefaultStudentSystem implements StudentSystem {
 	 * Adds course, returns id new course.
 	 */
 	public int addCourse(String courseCode, String name) {
+		if(courseCode.length() == 0 || name.length() == 0) {
+			return -1;
+		}
 		
 		Course course = new Course(courseCode, name);
 		int id = courseDao.saveCourse(course);
@@ -47,6 +50,10 @@ public class DefaultStudentSystem implements StudentSystem {
 	 * Updates course with the given courseId, with new courseCode and name
 	 */
 	public void updateCourse(int courseId, String courseCode, String name) {
+		if(!isValidId(courseId) || courseCode.length() == 0
+				|| name.length() == 0) {
+			return;
+		}
 		
 		Course course = courseDao.getCourse(courseId);
 		
@@ -58,14 +65,23 @@ public class DefaultStudentSystem implements StudentSystem {
 	}
 
 	public Course getCourse(int courseId) {
+		if(!isValidId(courseId)) {
+			return null;
+		}
 		return courseDao.getCourse(courseId);
 	}
 
 	public Course getCourseByCourseCode(String courseCode) {
+		if(courseCode.length() == 0) {
+			return null;
+		}
 		return courseDao.getCourseByCourseCode(courseCode);
 	}
 
 	public Course getCourseByName(String name) {
+		if(name.length() == 0) {
+			return null;
+		}
 		return courseDao.getCourseByName(name);
 	}
 
@@ -74,6 +90,9 @@ public class DefaultStudentSystem implements StudentSystem {
 	}
 
 	public void delCourse(int courseId) {
+		if(!isValidId(courseId)) {
+			return;
+		}
 		
 		Course course = courseDao.getCourse(courseId);
 		
@@ -83,36 +102,48 @@ public class DefaultStudentSystem implements StudentSystem {
 	}
 
 	public void addAttendantToCourse(int courseId, int studentId) {
+		if(!isValidId(courseId) || !isValidId(studentId)) {
+			return;
+		}
 		
 		Student student = studentDao.getStudent(studentId);
 		Course course   = courseDao.getCourse(courseId);
 		
 		if(student != null && course != null) {
 			course.getAttendants().add(student);
-			student.getCourses().add(course);
+			//student.getCourses().add(course);
 			courseDao.saveCourse(course);
-			studentDao.saveStudent(student);
+			//studentDao.saveStudent(student);
 		}
 	}
 
 	public void removeAttendantFromCourse(int courseId, int studentId) {
+		if(!isValidId(courseId) || !isValidId(studentId)) {
+			return;
+		}
 		
 		Course course   = courseDao.getCourse(courseId);
 		Student student = studentDao.getStudent(studentId);
 		
 		if(course != null && student != null) {
 			course.getAttendants().remove(student);
-			student.getCourses().remove(course);
+			//student.getCourses().remove(course);
 			courseDao.saveCourse(course);
-			studentDao.saveStudent(student);
+			//studentDao.saveStudent(student);
 		}
 	}
 
 	public int addDegree(String type) {
+		if(type.length() == 0) {
+			return -1;
+		}
 		return degreeDao.saveDegree(new Degree(type));
 	}
 
 	public void updateDegree(int degreeId, String type) {
+		if(!isValidId(degreeId) || type.length() == 0) {
+			return;
+		}
 		
 		Degree degree = degreeDao.getDegree(degreeId);
 		
@@ -123,10 +154,17 @@ public class DefaultStudentSystem implements StudentSystem {
 	}
 
 	public Degree getDegree(int degreeId) {
+		if(!isValidId(degreeId)) {
+			return null;
+		}
+		
 		return degreeDao.getDegree(degreeId);
 	}
 
 	public Degree getDegreeByType(String type) {
+		if(type.length() == 0) {
+			return null;
+		}
 		return degreeDao.getDegreeByType(type);
 	}
 
@@ -135,6 +173,9 @@ public class DefaultStudentSystem implements StudentSystem {
 	}
 
 	public void delDegree(int degreeId) {
+		if(!isValidId(degreeId)) {
+			return;
+		}
 		
 		Degree degree = degreeDao.getDegree(degreeId);
 		
@@ -144,6 +185,9 @@ public class DefaultStudentSystem implements StudentSystem {
 	}
 
 	public void addRequiredCourseToDegree(int degreeId, int courseId) {
+		if(!isValidId(degreeId) || !isValidId(courseId)) {
+			return;
+		}
 		
 		Course course = courseDao.getCourse(courseId);
 		Degree degree = degreeDao.getDegree(degreeId);
@@ -162,6 +206,9 @@ public class DefaultStudentSystem implements StudentSystem {
 	}
 
 	public void removeRequiredCourseFromDegree(int degreeId, int courseId) {
+		if(!isValidId(degreeId) || !isValidId(courseId)) {
+			return;
+		}
 		
 		Course course = courseDao.getCourse(courseId);
 		Degree degree = degreeDao.getDegree(degreeId);
@@ -176,6 +223,9 @@ public class DefaultStudentSystem implements StudentSystem {
 	 * Stores student in db.
 	 */
 	public int addStudent(String name) {
+		if(name.length() == 0) {
+			return -1;
+		}
 		return studentDao.saveStudent(new Student(name));
 	}
 
@@ -184,7 +234,11 @@ public class DefaultStudentSystem implements StudentSystem {
 	 * Does nothing if studentId is less than 1
 	 * or name is empty.
 	 */
-	public void updateStudent(int studentId, String name) {		
+	public void updateStudent(int studentId, String name) {
+		if(!isValidId(studentId) || name.length() == 0) {
+			return;
+		}
+		
 		Student student = studentDao.getStudent(studentId);
 		
 		if(student != null) {
@@ -195,10 +249,18 @@ public class DefaultStudentSystem implements StudentSystem {
 	
 	
 	public Student getStudent(int studentId) {		
+		if(!isValidId(studentId)) {
+			return null;
+		}
+		
 		return studentDao.getStudent(studentId);
 	}
 
 	public Student getStudentByName(String name) {
+		if(name.length() == 0) {
+			return null; 
+		}
+		
 		return studentDao.getStudentByName(name);
 	}
 
@@ -207,6 +269,10 @@ public class DefaultStudentSystem implements StudentSystem {
 	}
 
 	public void delStudent(int studentId) {
+		if(!isValidId(studentId)) {
+			return;
+		}
+		
 		Student student = studentDao.getStudent(studentId);
 		if(student != null) {
 			studentDao.delStudent(student);
@@ -214,6 +280,9 @@ public class DefaultStudentSystem implements StudentSystem {
 	}
 
 	public void addDegreeToStudent(int studentId, int degreeId) {
+		if(!isValidId(studentId) || !isValidId(degreeId)) {
+			return;
+		}
 		
 		Student student = studentDao.getStudent(studentId);
 		Degree degree   = degreeDao.getDegree(degreeId);
@@ -232,6 +301,9 @@ public class DefaultStudentSystem implements StudentSystem {
 	}
 
 	public void removeDegreeFromStudent(int studentId, int degreeId) {
+		if(!isValidId(studentId) || !isValidId(degreeId)) {
+			return;
+		}
 		
 		Student student = studentDao.getStudent(studentId);
 		Set<Degree> degrees = student.getDegrees();
@@ -249,6 +321,9 @@ public class DefaultStudentSystem implements StudentSystem {
 	}
 
 	public boolean studentFulfillsDegreeRequirements(int studentId, int degreeId) {
+		if(!isValidId(studentId) || !isValidId(degreeId)) {
+			return false;
+		}
 		
 		Student student = studentDao.getStudent(studentId);
 		Degree degree = degreeDao.getDegree(degreeId);

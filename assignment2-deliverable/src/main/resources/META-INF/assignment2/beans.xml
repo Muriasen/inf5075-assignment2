@@ -31,8 +31,8 @@
 		<property name="hibernateProperties">
 		<props>
 			<prop key="hibernate.show_sql">true</prop>
-			<prop key="hibernate.dialect">org.hibernate.dialect.H2Dialect</prop> 
-			<!-- <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop> -->
+			<!-- <prop key="hibernate.dialect">org.hibernate.dialect.H2Dialect</prop>  -->
+			<prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
 			<prop key="hibernate.hbm2ddl.auto">create-drop</prop>
 		</props>
 		</property>
@@ -42,17 +42,17 @@
 	destroy-method="close">
 
 <!-- 		
-		<property name="jdbcUrl" value="jdbc:postgresql:inf5750" />
-		<property name="driverClass" value="org.postgresql.Driver" />
-		<property name="user" value="dhis" />
-		<property name="password" value="dhis" />
--->
-
 		<property name="driverClass" value="org.h2.Driver" />
 		<property name="jdbcUrl"
 			value="jdbc:h2:mem:eventmanager;DB_CLOSE_ON_EXIT=FALSE" />
 		<property name="user" value="sa" />
 		<property name="password" value="" />
+-->
+		<property name="jdbcUrl" value="jdbc:postgresql:inf5750" />
+		<property name="driverClass" value="org.postgresql.Driver" />
+		<property name="user" value="dhis" />
+		<property name="password" value="dhis" />
+		
 		 
 	</bean>
 	
